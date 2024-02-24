@@ -4,7 +4,7 @@
   "description": "A mock API server created with JSON-server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx json-server --watch ./database/data.json"
   },
   "author": "",
   "license": "ISC",

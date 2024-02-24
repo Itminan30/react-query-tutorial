@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 
@@ -16,8 +16,18 @@ const AddProduct = () => {
         thumbnail: "",
     });
 
+    const queryClient = useQueryClient();
+
     const mutation = useMutation({
-        mutationFn: addProduct
+        mutationFn: addProduct,
+        onSuccess: (data, variables, context) => { // The data is the same data passed when mutation.mutate is called. The variables are the variables used for the post method. The context is the return of the onMutate.
+            console.log({ context }, { data }, { variables });
+            queryClient.setQueryData(["random"], { value: "Some Random Data in Cache" }); // Hardcode some data in cache
+            queryClient.invalidateQueries("products"); // Reload the data in cache
+        },
+        onMutate: (variables) => { // This is always called before executing the mutationFn
+            return { greeting: "Say Hello", variables }
+        }
     })
 
     const handleChange = (event) => {
@@ -35,10 +45,17 @@ const AddProduct = () => {
         const newState = { ...state, id: crypto.randomUUID().toString() };
         mutation.mutate(newState);
     }
+
+    if (mutation.isLoading) {
+        return <span>Submitting...</span>
+    }
+    if (mutation.isError) {
+        return <span>Error: {mutation.error.message}</span>
+    }
     return (
         <div className="m-2 p-2 bg-gray-100 w-1/5 h-1/2">
             <h2 className="text-2xl my-2">Add a Product</h2>
-            {/* {mutation.isSuccess && <p>Product Added!</p>} */}
+            {mutation.isSuccess && <p>Product Added!</p>}
             <form className="flex flex-col" onSubmit={submitData}>
                 <input
                     type="text"

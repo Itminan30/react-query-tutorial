@@ -8,7 +8,7 @@ import './index.css'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity
+      staleTime: Infinity // This property considers the fetched data fresh. 
     }
   }
 });

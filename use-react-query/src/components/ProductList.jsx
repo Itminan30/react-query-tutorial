@@ -11,6 +11,8 @@ const ProductList = () => {
     const { data: products, error, isLoading } = useQuery({
         queryKey: ["products"],
         queryFn: retrieveProducts,
+        retry: false, // By default tanstack tries 3 times to connect to the server in case of any error. 
+        // refetchInterval: 1000, // refetch data from the server after every one second
     })
 
     if (isLoading) return <div>Fetching Products Data...</div>

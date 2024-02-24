@@ -2,6 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 
+// Axios Function || mutationFn
+const addProduct = (newProduct) => {
+    axios.post("http://localhost:3000/products", newProduct);
+}
+
 const AddProduct = () => {
     const [state, setState] = useState({
         title: "",
@@ -10,6 +15,10 @@ const AddProduct = () => {
         rating: 5,
         thumbnail: "",
     });
+
+    const mutation = useMutation({
+        mutationFn: addProduct
+    })
 
     const handleChange = (event) => {
         event.preventDefault();
@@ -23,6 +32,8 @@ const AddProduct = () => {
 
     const submitData = (event) => {
         event.preventDefault();
+        const newState = { ...state, id: crypto.randomUUID().toString() };
+        mutation.mutate(newState);
     }
     return (
         <div className="m-2 p-2 bg-gray-100 w-1/5 h-1/2">
